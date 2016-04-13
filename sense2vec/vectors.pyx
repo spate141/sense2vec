@@ -237,21 +237,16 @@ cdef void linear_similarity(int* indices, float* scores, float* tmp,
         i += 1
 
 
-cdef extern from "cblas_shim.h":
-    float cblas_sdot(int N, float  *x, int incX, float  *y, int incY ) nogil
-    float cblas_snrm2(int N, float  *x, int incX) nogil
-    int _use_blas()
-
-
-cpdef bint use_blas():
-    return _use_blas()
+cdef extern from "num.h":
+    float num_sdot(int N, float  *x, int incX, float  *y, int incY ) nogil
+    float num_snrm2(int N, float  *x, int incX) nogil
 
 
 cdef float get_l2_norm(const float* vec, int n) nogil:
-    return cblas_snrm2(n, vec, 1)
+    return num_snrm2(n, vec, 1)
 
 
 cdef float cosine_similarity(const float* v1, const float* v2,
         float norm1, float norm2, int n) nogil:
-    cdef float dot = cblas_sdot(n, v1, 1, v2, 1)
+    cdef float dot = num_sdot(n, v1, 1, v2, 1)
     return dot / (norm1 * norm2)

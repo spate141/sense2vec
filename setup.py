@@ -27,20 +27,12 @@ MOD_NAMES = [
 # By subclassing build_extensions we have the actual compiler that will be used which is really known only after finalize_options
 # http://stackoverflow.com/questions/724664/python-distutils-how-to-get-a-compiler-that-is-going-to-be-used
 compile_options =  {'msvc'  : ['/Ox', '/EHsc'],
-                    'other' : ['-O3', '-Wno-unused-function',
-                               '-fno-stack-protector']}
+                    'other' : ['-O3',
+                               '-Wno-unused-function',
+                               '-fno-stack-protector',
+                               '-std=c++11']}
 link_options    =  {'msvc'  : [],
                     'other' : ['-fno-stack-protector']}
-
-
-if os.environ.get('USE_BLAS') == '1':
-    compile_options['other'].extend([
-        '-DUSE_BLAS=1',
-        '-fopenmp'])
-    link_options['other'].extend([
-        '-fopenmp',
-        '-L/usr/lib64/atlas',  # needed for redhat
-        '-lcblas'])
 
 
 class build_ext_subclass(build_ext):
@@ -50,11 +42,11 @@ class build_ext_subclass(build_ext):
             if mod:
                 self.compiler.add_include_dir(mod.get_include())
         for e in self.extensions:
-            e.extra_compile_args = compile_options.get(
-                self.compiler.compiler_type, compile_options['other'])
+            e.extra_compile_args.extend(compile_options.get(
+                self.compiler.compiler_type, compile_options['other']))
         for e in self.extensions:
-            e.extra_link_args = link_options.get(
-                self.compiler.compiler_type, link_options['other'])
+            e.extra_link_args.extend(link_options.get(
+                self.compiler.compiler_type, link_options['other']))
         build_ext.build_extensions(self)
 
 
@@ -116,6 +108,14 @@ def setup_package():
         with open(os.path.join(root, 'README.rst')) as f:
             readme = f.read()
 
+        with open(os.path.join(root, 'sense2vec', 'cpuinfo.py')) as f:
+            cpuinfo = {}
+            exec(f.read(), cpuinfo)
+
+        with open(os.path.join(root, 'sense2vec', 'arch.py')) as f:
+            arch = {}
+            exec(f.read(), arch)
+
         include_dirs = [
             get_python_inc(plat_specific=True),
             os.path.join(root, 'include')]
@@ -123,9 +123,22 @@ def setup_package():
         ext_modules = []
         for mod_name in MOD_NAMES:
             mod_path = mod_name.replace('.', '/') + '.cpp'
-            ext_modules.append(
-                Extension(mod_name, [mod_path],
-                    language='c++', include_dirs=include_dirs))
+
+            flags = cpuinfo['get_cpu_info']()['flags']
+            supported_archs = arch['get_supported_mapping'](flags)
+
+            for flag, (define, option) in supported_archs.items():
+                ext_args = {
+                    'language':'c++',
+                    'include_dirs': include_dirs}
+                if define:
+                    ext_args['define_macros'] = [(define, None)]
+                if option:
+                    ext_args['extra_compile_args'] = [option]
+
+                num_filename = os.path.join('sense2vec', 'num.cc')
+                ext_modules.append(
+                    Extension('_'.join([mod_name, flag], [mod_path, num_filename], **ext_args))
 
         if not is_source_release(root):
             generate_cython(root, 'sense2vec')
