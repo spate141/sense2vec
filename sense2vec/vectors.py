@@ -1,7 +1,6 @@
 import os
 import imp
 
-
 from . import cpuinfo
 from . import arch
 

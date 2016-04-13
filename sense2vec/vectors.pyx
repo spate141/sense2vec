@@ -16,6 +16,7 @@ from murmurhash.mrmr cimport hash64
 cimport posix.stdlib
 from cymem.cymem cimport Pool
 cimport numpy as np
+from libc.math cimport sqrt
 import numpy
 from os import path
 import ujson as json
@@ -246,16 +247,46 @@ cdef void linear_similarity(int* indices, float* scores, float* tmp,
         i += 1
 
 
-cdef extern from "num.h":
-    float num_sdot(int N, float  *x, int incX, float  *y, int incY ) nogil
-    float num_snrm2(int N, float  *x, int incX) nogil
+cdef extern from "<simdpp/simd.h>":
+    int SIMDPP_FAST_FLOAT32_SIZE
+
+
+cdef extern from "<simdpp/simd.h>" namespace "simdpp":
+    cppclass float32[SIMDPP_FAST_FLOAT32_SIZE]:
+        float32() nogil
+
+    float32 mul(float32, float32) nogil
+    float32 add(float32, float32) nogil
+    float32 load(void*) nogil
+    float reduce_add(float32) nogil
+    float32 make_float(double, double, double, double) nogil
 
 
 cdef float get_l2_norm(const float* vec, int n) nogil:
-    return num_snrm2(n, vec, 1)
+
+    cdef float32 x
+    cdef float32 z = make_float(0, 0, 0, 0)
+
+    cdef int i = 0
+    while i < n:
+        x = load(&vec[i])
+        z = add(mul(x, x), z)
+        i += SIMDPP_FAST_FLOAT32_SIZE
+
+    return sqrt(reduce_add(z))
 
 
 cdef float cosine_similarity(const float* v1, const float* v2,
-        float norm1, float norm2, int n) nogil:
-    cdef float dot = num_sdot(n, v1, 1, v2, 1)
-    return dot / (norm1 * norm2)
+                             float norm1, float norm2, int n) nogil:
+
+    cdef float32 x
+    cdef float32 z = make_float(0, 0, 0, 0)
+
+    cdef int i = 0
+    while i < n:
+        x = load(&v1[i])
+        y = load(&v2[i])
+        z = add(mul(x, y), z)
+        i += SIMDPP_FAST_FLOAT32_SIZE
+
+    return reduce_add(z) / (norm1 * norm2)
