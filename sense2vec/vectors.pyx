@@ -4,7 +4,7 @@
 cimport cython.parallel
 from libc.stdint cimport int32_t
 from libc.stdint cimport uint64_t
-from libc.string cimport memcpy
+from libc.string cimport memcpy, memset
 from libcpp.pair cimport pair
 from libcpp.queue cimport priority_queue
 from libcpp.vector cimport vector
@@ -13,6 +13,7 @@ from preshed.maps cimport PreshMap
 from spacy.strings cimport StringStore, hash_string
 from murmurhash.mrmr cimport hash64
 
+cimport posix.stdlib
 from cymem.cymem cimport Pool
 cimport numpy as np
 import numpy
@@ -125,7 +126,11 @@ cdef class VectorStore:
     def __init__(self, int nr_dim):
         self.mem = Pool()
         self.nr_dim = nr_dim 
-        zeros = <float*>self.mem.alloc(self.nr_dim, sizeof(float))
+
+        cdef float* zeros
+        posix.stdlib.posix_memalign(<void**>&zeros, 32, self.nr_dim * sizeof(float))
+        memset(zeros, 0, self.nr_dim * sizeof(float))
+
         self.vectors.push_back(zeros)
         self.norms.push_back(0)
         self.cache = PreshMap(100000)
@@ -137,7 +142,11 @@ cdef class VectorStore:
 
     def add(self, float[:] vec):
         assert len(vec) == self.nr_dim
-        ptr = <float*>self.mem.alloc(self.nr_dim, sizeof(float))
+
+        cdef float* ptr
+        posix.stdlib.posix_memalign(<void**>&ptr, 32, self.nr_dim * sizeof(float))
+        memset(ptr, 0, self.nr_dim * sizeof(float))
+
         memcpy(ptr,
             &vec[0], sizeof(ptr[0]) * self.nr_dim)
         self.norms.push_back(get_l2_norm(&ptr[0], self.nr_dim))
