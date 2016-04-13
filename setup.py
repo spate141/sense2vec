@@ -35,6 +35,11 @@ link_options    =  {'msvc'  : [],
                     'other' : ['-fno-stack-protector']}
 
 
+if not sys.platform.startswith('darwin'):
+    compile_options['other'].append('-fopenmp')
+    link_options['other'].append('-fopenmp')
+
+
 class build_ext_subclass(build_ext):
     def build_extensions(self):
         for mod_name in ['numpy', 'murmurhash']:
