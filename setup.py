@@ -138,7 +138,7 @@ def setup_package():
 
                 num_filename = os.path.join('sense2vec', 'num.cc')
                 ext_modules.append(
-                    Extension('_'.join([mod_name, flag], [mod_path, num_filename], **ext_args))
+                    Extension('_'.join([mod_name, flag]), [mod_path, num_filename], **ext_args))
 
         if not is_source_release(root):
             generate_cython(root, 'sense2vec')
