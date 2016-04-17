@@ -19,9 +19,9 @@ mapping = {
 def get_supported_mapping(flags):
     if 'null' not in flags:
         flags.append('null')
-    return {f: mapping[f] for f
+    return dict([(f, mapping[f]) for f
             in flags
-            if f in mapping}
+            if f in mapping])
 
 
 def get_supported(flags):

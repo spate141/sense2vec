@@ -31,7 +31,8 @@ compile_options =  {'msvc'  : ['/Ox', '/EHsc'],
                     'other' : ['-O3',
                                '-Wno-unused-function',
                                '-fno-stack-protector',
-                               '-std=c++11']}
+                               '-std=c++11',
+                               '-stdlib=libc++']}
 link_options    =  {'msvc'  : [],
                     'other' : ['-fno-stack-protector']}
 
