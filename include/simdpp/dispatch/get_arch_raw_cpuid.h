@@ -12,7 +12,7 @@
 #define SIMDPP_HAS_GET_ARCH_RAW_CPUID 1
 
 #include <simdpp/dispatch/arch.h>
-#include <cstdint>
+#include <stdint.h>
 
 #if __GNUC__
 #include <cpuid.h>

@@ -42,6 +42,14 @@
 #endif
 #endif
 
+#if ((__GNUC__ > 4) || ((__GNUC__ == 4) && (__GNUC_MINOR__ >= 7))) || \
+    (defined(__clang__) && (__clang_major__ == 3) && (__clang_minor__ >= 6)) || \
+    (defined(__clang__) && (__clang_major__ > 4))
+#define SIMDPP_ATTRIBUTE_UNUSED __attribute__((unused))
+#else
+#define SIMDPP_ATTRIBUTE_UNUSED
+#endif
+
 #if SIMDPP_USE_AVX || SIMDPP_USE_AVX2
 #if (__clang_major__ == 3) && (__clang_minor__ == 6)
 /*  See https://llvm.org/bugs/show_bug.cgi?id=23441. Clang does not generate

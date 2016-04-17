@@ -56,7 +56,7 @@ namespace detail {
 
 template<class R, class E1, class E2> SIMDPP_INL
 int32<8> expr_eval(const expr_mull<int16<8,E1>,
-                                   int16<8,E2>>& q)
+                                   int16<8,E2> >& q)
 {
     int16<8> a = q.a.eval();
     int16<8> b = q.b.eval();
@@ -84,7 +84,7 @@ int32<8> expr_eval(const expr_mull<int16<8,E1>,
 #if SIMDPP_USE_AVX2
 template<class R, class E1, class E2> SIMDPP_INL
 int32<16> expr_eval(const expr_mull<int16<16,E1>,
-                                    int16<16,E2>>& q)
+                                    int16<16,E2> >& q)
 {
     int16<16> a = q.a.eval();
     int16<16> b = q.b.eval();
@@ -98,7 +98,7 @@ int32<16> expr_eval(const expr_mull<int16<16,E1>,
 
 template<class R, unsigned N, class E1, class E2> SIMDPP_INL
 int32<N> expr_eval(const expr_mull<int16<N,E1>,
-                                   int16<N,E2>>& q)
+                                   int16<N,E2> >& q)
 {
     int16<N> a = q.a.eval();
     int16<N> b = q.b.eval();
@@ -113,7 +113,7 @@ int32<N> expr_eval(const expr_mull<int16<N,E1>,
 
 template<class R, class E1, class E2> SIMDPP_INL
 uint32<8> expr_eval(const expr_mull<uint16<8,E1>,
-                                    uint16<8,E2>>& q)
+                                    uint16<8,E2> >& q)
 {
     uint16<8> a = q.a.eval();
     uint16<8> b = q.b.eval();
@@ -141,7 +141,7 @@ uint32<8> expr_eval(const expr_mull<uint16<8,E1>,
 #if SIMDPP_USE_AVX2
 template<class R, class E1, class E2> SIMDPP_INL
 uint32<16> expr_eval(const expr_mull<uint16<16,E1>,
-                                     uint16<16,E2>>& q)
+                                     uint16<16,E2> >& q)
 {
     uint16<16> a = q.a.eval();
     uint16<16> b = q.b.eval();
@@ -155,7 +155,7 @@ uint32<16> expr_eval(const expr_mull<uint16<16,E1>,
 
 template<class R, unsigned N, class E1, class E2> SIMDPP_INL
 uint32<N> expr_eval(const expr_mull<uint16<N,E1>,
-                                    uint16<N,E2>>& q)
+                                    uint16<N,E2> >& q)
 {
     uint16<N> a = q.a.eval();
     uint16<N> b = q.b.eval();
@@ -170,7 +170,7 @@ uint32<N> expr_eval(const expr_mull<uint16<N,E1>,
 
 template<class R, class E1, class E2> SIMDPP_INL
 int64<4> expr_eval(const expr_mull<int32<4,E1>,
-                                   int32<4,E2>>& q)
+                                   int32<4,E2> >& q)
 {
     int32<4> a = q.a.eval();
     int32<4> b = q.b.eval();
@@ -203,7 +203,7 @@ int64<4> expr_eval(const expr_mull<int32<4,E1>,
 #if SIMDPP_USE_AVX2
 template<class R, class E1, class E2> SIMDPP_INL
 int64<8> expr_eval(const expr_mull<int32<8,E1>,
-                                   int32<8,E2>>& q)
+                                   int32<8,E2> >& q)
 {
     int32<8> a = q.a.eval();
     int32<8> b = q.b.eval();
@@ -220,7 +220,7 @@ int64<8> expr_eval(const expr_mull<int32<8,E1>,
 
 template<class R, unsigned N, class E1, class E2> SIMDPP_INL
 int64<N> expr_eval(const expr_mull<int32<N,E1>,
-                                   int32<N,E2>>& q)
+                                   int32<N,E2> >& q)
 {
     int32<N> a = q.a.eval();
     int32<N> b = q.b.eval();
@@ -235,7 +235,7 @@ int64<N> expr_eval(const expr_mull<int32<N,E1>,
 
 template<class R, class E1, class E2> SIMDPP_INL
 uint64<4> expr_eval(const expr_mull<uint32<4,E1>,
-                                    uint32<4,E2>>& q)
+                                    uint32<4,E2> >& q)
 {
     uint32<4> a = q.a.eval();
     uint32<4> b = q.b.eval();
@@ -261,8 +261,8 @@ uint64<4> expr_eval(const expr_mull<uint32<4,E1>,
     uint64x2 hi = vmull_u32(vget_high_u32(a), vget_high_u32(b));
     return combine(lo, hi);
 #elif SIMDPP_USE_ALTIVEC
-    mem_block<uint32<4>> ba = a;
-    mem_block<uint32<4>> bb = b;
+    mem_block<uint32<4> > ba = a;
+    mem_block<uint32<4> > bb = b;
     uint64x4 r;
     r.vec(0).el(0) = (uint64_t) ba[0] * bb[0];
     r.vec(0).el(1) = (uint64_t) ba[1] * bb[1];
@@ -275,7 +275,7 @@ uint64<4> expr_eval(const expr_mull<uint32<4,E1>,
 #if SIMDPP_USE_AVX2
 template<class R, class E1, class E2> SIMDPP_INL
 uint64<8> expr_eval(const expr_mull<uint32<8,E1>,
-                                    uint32<8,E2>>& q)
+                                    uint32<8,E2> >& q)
 {
     uint32<8> a = q.a.eval();
     uint32<8> b = q.b.eval();
@@ -295,7 +295,7 @@ uint64<8> expr_eval(const expr_mull<uint32<8,E1>,
 #if SIMDPP_USE_AVX512F
 template<class R, class E1, class E2> SIMDPP_INL
 uint64<16> expr_eval(const expr_mull<uint32<16,E1>,
-                                     uint32<16,E2>>& q)
+                                     uint32<16,E2> >& q)
 {
     uint32<16> a = q.a.eval();
     uint32<16> b = q.b.eval();
@@ -314,7 +314,7 @@ uint64<16> expr_eval(const expr_mull<uint32<16,E1>,
 
 template<class R, unsigned N, class E1, class E2> SIMDPP_INL
 uint64<N> expr_eval(const expr_mull<uint32<N,E1>,
-                                    uint32<N,E2>>& q)
+                                    uint32<N,E2> >& q)
 {
     uint32<N> a = q.a.eval();
     uint32<N> b = q.b.eval();
