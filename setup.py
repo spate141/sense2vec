@@ -151,15 +151,19 @@ def setup_package():
 
             flag = 'sse2'
             define = 'SIMDPP_ARCH_X86_SSE2'
-            option = '-msse2'
+            option_unix = '-msse2'
+            option_msvc = '/ARCH:SSE2'
+
 
             ext_args = {
                 'language':'c++',
                 'include_dirs': include_dirs}
             if define:
                 ext_args['define_macros'] = [(define, None)]
-            if option and get_default_compiler() == 'unix':
-                ext_args['extra_compile_args'] = [option]
+            if option_unix and get_default_compiler() == 'unix':
+                ext_args['extra_compile_args'] = [option_unix]
+            if option_msvc and get_default_compiler() == 'msvc':
+                    ext_args['extra_compile_args'] = [option_msvc]
 
             ext_modules.append(
                 Extension(mod_name, [mod_path], **ext_args))
