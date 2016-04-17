@@ -7,6 +7,7 @@ import sys
 import contextlib
 from distutils.command.build_ext import build_ext
 from distutils.sysconfig import get_python_inc
+from distutils.ccompiler import get_default_compiler
 
 try:
     from setuptools import Extension, setup
@@ -138,7 +139,7 @@ def setup_package():
                     'include_dirs': include_dirs}
                 if define:
                     ext_args['define_macros'] = [(define, None)]
-                if option:
+                if option and get_default_compiler() == 'unix':
                     ext_args['extra_compile_args'] = [option]
 
                 ext_modules.append(
