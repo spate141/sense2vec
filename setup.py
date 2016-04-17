@@ -137,17 +137,32 @@ def setup_package():
             flags = cpuinfo['get_cpu_info']()['flags']
             supported_archs = arch['get_supported_mapping'](flags)
 
-            for flag, (define, option) in supported_archs.items():
-                ext_args = {
-                    'language':'c++',
-                    'include_dirs': include_dirs}
-                if define:
-                    ext_args['define_macros'] = [(define, None)]
-                if option and get_default_compiler() == 'unix':
-                    ext_args['extra_compile_args'] = [option]
+            # for flag, (define, option) in supported_archs.items():
+            #     ext_args = {
+            #         'language':'c++',
+            #         'include_dirs': include_dirs}
+            #     if define:
+            #         ext_args['define_macros'] = [(define, None)]
+            #     if option and get_default_compiler() == 'unix':
+            #         ext_args['extra_compile_args'] = [option]
 
-                ext_modules.append(
-                    Extension('_'.join([mod_name, flag]), [mod_path], **ext_args))
+            #     ext_modules.append(
+            #         Extension('_'.join([mod_name, flag]), [mod_path], **ext_args))
+
+            flag = 'sse2'
+            define = 'SIMDPP_ARCH_X86_SSE2'
+            option = '-msse2'
+
+            ext_args = {
+                'language':'c++',
+                'include_dirs': include_dirs}
+            if define:
+                ext_args['define_macros'] = [(define, None)]
+            if option and get_default_compiler() == 'unix':
+                ext_args['extra_compile_args'] = [option]
+
+            ext_modules.append(
+                Extension(mod_name, [mod_path], **ext_args))
 
         if not is_source_release(root):
             generate_cython(root, 'sense2vec')
