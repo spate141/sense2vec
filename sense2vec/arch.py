@@ -9,7 +9,7 @@ mapping = {
     'sse4_1': ('SIMDPP_ARCH_X86_SSE4_1', '-msse4.1'),
     'avx': ('SIMDPP_ARCH_X86_AVX', '-mavx'),
     'avx2': ('SIMDPP_ARCH_X86_AVX2', '-mavx2'),
-    'fma': ('SIMDPP_ARCH_X86_FMA3', '-mfma'),
+    # 'fma': ('SIMDPP_ARCH_X86_FMA3', '-mfma'),
     'fma4': ('SIMDPP_ARCH_X86_FMA4', '-mfma4'),
     'xop': ('SIMDPP_ARCH_X86_XOP', '-mxop'),
     'avx512f': ('SIMDPP_ARCH_X86_AVX512F', '-mavx512f'),
@@ -21,7 +21,7 @@ def get_supported_mapping(flags):
         flags.insert(0, 'null')
     return dict([[(f, mapping[f]) for f
             in available
-            if f in flags][-1]])
+            if f in flags and f in mapping][-1]])
 
 
 def get_supported(flags):
