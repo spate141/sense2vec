@@ -32,7 +32,7 @@ compile_options =  {'msvc'  : ['/Ox', '/EHsc'],
                                '-Wno-unused-function',
                                '-fno-stack-protector']}
 link_options    =  {'msvc'  : [],
-                    'other' : ['-fno-stack-protector']}
+                    'other' : ['-fno-stack-protector', '-std=c++11']}
 
 
 if not sys.platform.startswith('darwin'):
