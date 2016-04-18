@@ -168,9 +168,6 @@
 
 // Include headers relevant for the enabled instruction sets.
 #if SIMDPP_USE_SSE2
-    #if _MSC_VER
-        #include <intrin.h>
-    #endif
     #include <xmmintrin.h>
     #include <emmintrin.h>
 #endif
