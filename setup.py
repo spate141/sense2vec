@@ -30,17 +30,12 @@ MOD_NAMES = [
 compile_options =  {'msvc'  : ['/Ox', '/EHsc'],
                     'other' : ['-O3',
                                '-Wno-unused-function',
-                               '-fno-stack-protector',
-                               '-std=c++11']}
+                               '-fno-stack-protector']}
 link_options    =  {'msvc'  : [],
                     'other' : ['-fno-stack-protector']}
 
 
-if sys.platform.startswith('darwin'):
-    compile_options['other'].extend([
-        '-stdlib=libc++',
-        '-mmacosx-version-min=10.7'])
-else:
+if not sys.platform.startswith('darwin'):
     compile_options['other'].append('-fopenmp')
     link_options['other'].append('-fopenmp')
 
