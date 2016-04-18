@@ -181,7 +181,7 @@ def setup_package():
             license=about['__license__'],
             ext_modules=ext_modules,
             install_requires=[
-                'numpy',
+                'numpy<1.11',
                 'ujson>=1.34',
                 'spacy>=0.100,<0.101',
                 'preshed>=0.46,<0.47',
